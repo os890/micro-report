@@ -24,7 +24,11 @@ import jakarta.ws.rs.GET;
 import jakarta.ws.rs.Path;
 import jakarta.ws.rs.Produces;
 import jakarta.ws.rs.QueryParam;
+import jakarta.ws.rs.core.Context;
 import jakarta.ws.rs.core.Response;
+import jakarta.ws.rs.core.UriInfo;
+import org.os890.microreport.demo.storage.MicroStore;
+import org.os890.microreport.demo.storage.StorageRoot;
 
 import static jakarta.ws.rs.core.MediaType.TEXT_HTML;
 
@@ -38,9 +42,24 @@ public class MicroReportEndpoint {
     @Inject
     private GenericReportRunner genericReportRunner;
 
+    @Inject
+    private MicroStore microStore;
+
     @GET
     @Produces(TEXT_HTML)
-    public Response overviewReport(@QueryParam("overview") Boolean showOverviewOnly) {
+    public Response overviewReport(@QueryParam("overview") Boolean showOverviewOnly, @Context UriInfo uriInfo) {
+        if (microStore.isEmpty()) {
+            String noDataResponse = """
+                    <html>
+                      <head>
+                        <meta http-equiv="refresh" content="0;url=#{target}" />
+                      </head>
+                     <body></body>
+                    </html>
+                    """.replace("#{target}", uriInfo.getRequestUriBuilder().path("/more").build().toString());
+            return Response.ok().entity(noDataResponse).build();
+        }
+
         return Response
                 .ok(genericReportRunner.render(accountReportController.createTopReports(), accountReportController.createAllReports(), Boolean.TRUE.equals(showOverviewOnly)))
                 .build();

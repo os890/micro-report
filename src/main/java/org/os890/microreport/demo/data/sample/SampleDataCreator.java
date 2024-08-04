@@ -78,7 +78,7 @@ public class SampleDataCreator {
         }
     }
 
-    private static void createRandomUsers(int amount, List<Account> dataList) {
+    public static void createRandomUsers(int amount, List<Account> dataList) {
         IntStream.range(0, amount).parallel().forEach(entryNumber -> {
             LOG.info("create acount #" + entryNumber);
             Account account = new Account();

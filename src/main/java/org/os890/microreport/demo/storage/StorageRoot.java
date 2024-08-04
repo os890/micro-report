@@ -20,6 +20,8 @@ package org.os890.microreport.demo.storage;
 
 import jakarta.enterprise.context.ApplicationScoped;
 
+import java.util.function.Predicate;
+
 @ApplicationScoped
 public class StorageRoot {
     //use indirection to avoid issues with cdi-proxies
@@ -46,8 +48,17 @@ public class StorageRoot {
         this.persistedStorage = persisted;
     }
 
+    public Object find(Predicate<Object> findPredicate) {
+        return getTopAccountStorage().getAccountList().stream().filter(findPredicate).findFirst().orElseGet(() ->
+                getAccountStorage().getAccountList().stream().filter(findPredicate).findFirst().orElse(null));
+    }
+
     public static class Persisted {
         private AccountStorage topAccountStorage = new AccountStorage();
         private AccountStorage accountStorage = new AccountStorage();
+
+        public boolean isEmpty() {
+            return topAccountStorage.getAccountList().isEmpty() && accountStorage.getAccountList().isEmpty();
+        }
     }
 }

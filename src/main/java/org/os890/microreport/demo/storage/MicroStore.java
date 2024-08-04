@@ -19,13 +19,20 @@
 package org.os890.microreport.demo.storage;
 
 import jakarta.annotation.PostConstruct;
+import jakarta.annotation.Priority;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.enterprise.event.Event;
+import jakarta.enterprise.event.Observes;
 import jakarta.inject.Inject;
 import one.microstream.persistence.binary.jdk8.types.BinaryHandlersJDK8;
 import one.microstream.storage.embedded.configuration.types.EmbeddedStorageConfiguration;
 import one.microstream.storage.types.StorageManager;
 import org.eclipse.microprofile.config.inject.ConfigProperty;
+
+import java.util.function.Predicate;
+
+import static java.lang.Integer.MAX_VALUE;
+import static java.lang.Integer.MIN_VALUE;
 
 @ApplicationScoped
 public class MicroStore {
@@ -46,8 +53,12 @@ public class MicroStore {
         init();
     }
 
+    @Inject
+    private StorageManagerAdapter storageManagerAdapter;
+
     protected void init() {
         this.storageManager = createStorageManager();
+        this.storageManagerAdapter.bind(this.storageManager); //see comment at StorageManagerAdapter
 
         if (storageManager.root() == null) {
             storageManager.setRoot(storageRoot.get());
@@ -77,5 +88,9 @@ public class MicroStore {
 
     public long fileCount() {
         return this.storageManager.createStorageStatistics().fileCount();
+    }
+
+    public boolean isEmpty() {
+        return storageRoot.find(o -> true) == null;
     }
 }
