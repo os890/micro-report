@@ -49,11 +49,8 @@ public class AddReportDataEndpoint {
                 <html>
                 <body>
                 	<h1>Create more data</h1>
-
                 	<form action="/${postTarget}" method="post">
-                		<p>
-                			Number: <input type="text" name="numberOfNewEntries" />
-                		</p>
+                		<p>Number: <input type="text" name="numberOfNewEntries" /></p>
                 		<input type="submit" value="Create" />
                 	</form>
                 </body>
