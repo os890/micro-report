@@ -70,7 +70,7 @@ public class MicroReportTest {
             String microReport = response.readEntity(String.class);
             Assertions.assertNotNull(microReport);
 
-            File targetFile = new File(StringUtils.normalizePath(output.toFile().getAbsolutePath() + "/result_overview.html"));
+            File targetFile = new File(normalizePath(output.toFile().getAbsolutePath() + "/result_overview.html"));
             writeToFile(targetFile, microReport);
         }
     }
@@ -84,7 +84,7 @@ public class MicroReportTest {
             String microReport = response.readEntity(String.class);
             Assertions.assertNotNull(microReport);
 
-            File targetFile = new File(StringUtils.normalizePath(output.toFile().getAbsolutePath() + "/result_overview.html"));
+            File targetFile = new File(normalizePath(output.toFile().getAbsolutePath() + "/result_overview.html"));
             writeToFile(targetFile, microReport);
         }
     }
@@ -100,5 +100,9 @@ public class MicroReportTest {
     private static void writeToFile(File targetFile, String microReport) throws IOException {
         Files.writeString(targetFile.toPath(), microReport, CREATE_NEW);
         LOG.info("file path: " + targetFile.getAbsolutePath());
+    }
+
+    private String normalizePath(String path) {
+        return path.replace("\\", "/").replace("//", "/");
     }
 }
